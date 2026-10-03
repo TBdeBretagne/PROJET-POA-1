@@ -13,7 +13,7 @@ def affiche_armoire():
     print("")
 
 
-def affichage(carte_complete, dimension, carte, tour, requete, numero):
+def affichage(carte_complete, dimension, carte, tour, requete, numero, action, main, destination):
     print("Carte : ")
     print("Complète : ", " "*25, "Point de vue de l'Agent :")
     affiche_carte(carte_complete, dimension, carte)
@@ -24,3 +24,6 @@ def affichage(carte_complete, dimension, carte, tour, requete, numero):
     print("Tours :",tour)
     print("Numéro de la demande :", numero)
     print("Requete en cours :", requete)
+    print("Action du robot lors de ce tour:", action)
+    print("Main du robot :",main)
+    print("Destination :",destination)

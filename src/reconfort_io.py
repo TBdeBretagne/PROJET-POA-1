@@ -102,7 +102,6 @@ def _lire_json(chemin: str | Path, format_attendu: str) -> Dict[str, Any]:
         raise ErreurFichier(
             f"{chemin} : version {VERSION_ATTENDUE} attendue, trouve {version!r}"
         )
-
     return donnees
 
 
