@@ -1,5 +1,9 @@
 import reconfort_io as rio
 import random
+import time
+
+
+print("\033[2J\033[H", end="")
 
 def initialisation():
     dictionnary = rio.charger_dictionnaire("donnees/dictionnaire.json")
@@ -12,21 +16,51 @@ def initialisation():
     for i in range(len(locker)):
         lockerMap[locker[i].get("ligne")][locker[i].get("colonne")] = locker[i].get("objet")
 
-    robotView[cursorPos[0]][cursorPos[1]] = lockerMap[cursorPos[0]][cursorPos[1]]
+    #robotView[cursorPos[0]][cursorPos[1]] = lockerMap[cursorPos[0]][cursorPos[1]]
 
     return dictionnary, armory, lockerMap, robotView
 
+emotionsConverter = {
+    "joie": 0,
+    "confiance": 1,
+    "peur": 2,
+    "surprise": 3,
+    "tristesse": 4,
+    "degout": 5,
+    "colere": 6,
+    "anticipation": 7
+}
 
-def findEmotion(message, inputTab):
+intensitesConverter = {
+    "faible": 0,
+    "moyenne": 1,
+    "forte": 2
+}
+
+
+
+
+
+def findEmotion(message, entrees):
+    if not isinstance(message,str) or message == "" or entrees == []:
+        raise ValueError("Emotion non reconnue")
     words = rio.normaliser(message)
     for word in words:
-        for j in range(len(inputTab)):
-            if word in inputTab[j].get("formes"):
-                return [word, inputTab[j].get("intensite"), inputTab[j].get("emotion")]
+        for j in range(len(entrees)):
+            if word in entrees[j].get("formes"):
+                return [
+                    word,
+                    intensitesConverter[entrees[j].get("intensite")],
+                    emotionsConverter[entrees[j].get("emotion")]
+                ]
     return None
 
 
+
+
 def displayArmory(lockerMap):
+    if not isinstance(lockerMap,list):
+        raise ValueError("Carte armoire inaccessible")
     print("   ", end="")
     for i in range(8):
         print(i, end="   ")
@@ -42,7 +76,10 @@ def displayArmory(lockerMap):
         print()
 
 
-def displayRobotView(robotView):
+def displayRobotView(robotView,cursorPos):
+    if not isinstance(robotView,list) or not isinstance(cursorPos,list):
+        raise ValueError("Vision armoire du robot inaccessible")
+    print("\033[H", end="")
     print("   ", end="")
     for i in range(8):
         print(i, end="   ")
@@ -51,31 +88,41 @@ def displayRobotView(robotView):
     for i in range(len(robotView)):
         print(i, end="  ")
         for j in range(len(robotView[0])):
-            if robotView[i][j] != '?':
-                print("O", end="   ")
+            if i == cursorPos[0] and j == cursorPos[1]:
+                print('^', end="   ")
+            elif len(robotView[i][j]) > 1:
+                print('O', end="   ")
             else:
-                print("?", end="   ")
+                print(robotView[i][j], end="   ") 
         print()
+    time.sleep(1)
 
 def moveCursor(cursorPos,direction):
+    if not isinstance(cursorPos,list) or cursorPos == []:
+        raise ValueError("Impossible de déplacer le curseur")
+    if not isinstance(direction,chr) or direction == '':
+            raise ValueError("Impossible d'effectuer ce mouvement")
+    pos = cursorPos.copy() 
     match direction:
         case 'N':
-            if cursorPos[0] != 0:
-                cursorPos[0] -= 1 
+            if pos[0] != 0:
+                pos[0] -= 1 
             else:None 
         case 'S':
-            if cursorPos[0] != 2:
-                cursorPos[0] += 1
+            if pos[0] != 2:
+                pos[0] += 1
         case 'E':
-            cursorPos[1] = (cursorPos[1] + 1) % 8 
+            pos[1] = (pos[1] + 1) % 8 
         case 'O':
-            cursorPos[1] = (cursorPos[1] - 1) % 8 # in python -x mod n = n-x if 0 < x < n
+            pos[1] = (pos[1] - 1) % 8 # in python -x mod n = n-x if 0 < x < n
         case _:
             None
-    return cursorPos
+    return pos
 
 
 def createPath(start,goal):
+    if not isinstance(start,list) or start == [] or isinstance(goal,list) or goal == []:
+        raise ValueError("Impossible de trouver une combinaison dans le casier")
     directions = []
     startI = start[0]
     startJ = start[1] 
@@ -114,6 +161,8 @@ def movTest(start, goal):
 
 
 def findCandidate(position):
+    if not isinstance(position,list) or position == []:
+        raise ValueError("Impossible de trouver une stratégie de repli")
     candidateLocker = []
     tab = [0,1,2]
     intensities = [position[0]]                 # Allowed tab : [0,1,2] or [1,0,2] or [2,1,0]
@@ -136,13 +185,82 @@ def findCandidate(position):
 
     return candidateLocker
             
-   
+def updateRobotView(armory,cursorPos,robotView):
+    if not isinstance(cursorPos,list) or cursorPos == []:
+        raise ValueError("Impossible de trouver une combinaison dans le casier")
+    if not isinstance(robotView,list) or robotView == []:
+            raise ValueError("Vision armoire du robot inaccessible")
+    locker = armory.get("casiers")
+    if locker[cursorPos[0] * 8 + cursorPos[1]].get("objet") is not None:
+        
+        robotView[cursorPos[0]][cursorPos[1]] = 'O'
+    else:
+        robotView[cursorPos[0]][cursorPos[1]] = '_'
+
+def getObjectInLocker(sentence):
+    if not isinstance(sentence,str) or sentence == "":
+        raise ValueError("Emotion non reconnue")
+    dictionnary, armory, lockerMap, robotView = initialisation()
+    inputTab = dictionnary.get("entrees")
+    lockers = armory.get("casiers")
+    objectFound = False
+    emotion = findEmotion(sentence,inputTab)
+    outputSentence =""
+    if emotion is None:
+        print("Emotion indeterminee")
+    else:
+        
+        lockerPosition = [emotion[1],emotion[2]]
+        cursorPos = armory.get("casier_depart").copy()
+        displayRobotView(robotView,cursorPos)
+        updateRobotView(armory,cursorPos,robotView)
+        path = createPath(cursorPos,lockerPosition)
+
+        for direction in path:
+            cursorPos = moveCursor(cursorPos,direction)
+            updateRobotView(armory,cursorPos,robotView)
+            displayRobotView(robotView,cursorPos)
+
+        if robotView[cursorPos[0]][cursorPos[1]] == 'O':
+            objectFound = True
+            index = cursorPos[0]*8+cursorPos[1]
+            objet = lockers[index].get("objet")
+            outputSentence = f"Le robot vous donne : {objet}"
+
+            
+        else:
+            candidates = findCandidate(cursorPos)
+            for candidateLocker in candidates:
+                path = createPath(cursorPos,candidateLocker)
+                for direction in path:
+                    cursorPos = moveCursor(cursorPos,direction)
+                    updateRobotView(armory,cursorPos,robotView)
+                    displayRobotView(robotView,cursorPos)
+
+                if robotView[cursorPos[0]][cursorPos[1]] == 'O':
+                    objectFound = True
+                    index = cursorPos[0]*8+cursorPos[1]
+                    objet = lockers[index].get("objet")
+                    outputSentence = f"Le robot vous donne : {objet}"
+                    break
+                
+
+            if not objectFound:
+                outputSentence= "Le robot n'a rien trouvé pour vous."
+        return outputSentence
+
+  
 
 def main():
     dictionnary, armory, lockerMap, robotView = initialisation()
     inputTab = dictionnary.get("entrees")
 
     
+
+    #########################################################################################################################
+    ########################################          Tests            ######################################################
+    #########################################################################################################################
+
     #print(findEmotion("Il pleut, ca m'apaise mais ca me rend triste aussi", inputTab))
     #displayArmory(lockerMap)
     #displayRobotView(robotView)
@@ -151,6 +269,27 @@ def main():
     # cursorPos = armory.get("casier_depart")
     # movTest(cursorPos,[2,5])
     #print(findCandidate([2,3]))
+    #updateRobotView(armory,[2,3],robotView)
+    #displayRobotView(robotView)
+
+    print(getObjectInLocker(sentence = "J'ai le cafard aujourd'hui, sans savoir pourquoi." ))
+
+
+        
+
+    #########################################################################################################################
+    ########################################          Simulation            #################################################
+    #########################################################################################################################
+    
+    
+    
+
+    
+
+
+
+
+
 
 if __name__ == "__main__":
     main()
