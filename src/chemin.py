@@ -35,6 +35,6 @@ def Arriver(case, carte):
     result = []
     voisins = [(case[0],case[1]+1), (case[0], case[1]-1), (case[0]+1, case[1]), (case[0]-1, case[1])]
     for voisin in voisins:
-        if est_traversable(carte['grille'][voisin[0]][voisin[1]]):
+        if est_traversable(carte[voisin[0]][voisin[1]]):
             result.append(voisin)
     return result

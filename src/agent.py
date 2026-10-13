@@ -1,17 +1,22 @@
+from .armoire import Armoire
+from .dictionnaire import Dictionnaire
+
+
 class agent():
-    def __init__(self, position, armoire, dictionnaire, dimension, resident):
+    def __init__(self, position, posArmoire, armoire, dictionnaire, dimension, resident):
         self.main = [] #Initialement, l'agent ne peux prendre qu'un seul objet
         self.carte = [] #Cartographie de l'espace que l'agent a découvert
         self.position = tuple(position) #Vec2 position de l'agent
-        self.position_armoire = armoire #Vec2 position de l'armoire
+        self.position_armoire = posArmoire #Vec2 position de l'armoire
         self.position_dictionnaire = dictionnaire # Vec2 position du dictionnaire
         self.resident = {} #enregistre la position des résidents
-        self.armoire = [] #Cartographie de l'armoire que l'agent a découvert
         self.demande = "" #Demande d'un résident que l'agent est en train de traiter
         self.consulte = False
         self.numero = 0 # numero de la demande
         self.position_resident = [] #Resident pris en charge
         self.action = "Attendre" #Indique l'etat du robot
+        self.armoire = Armoire(armoire) # Class Armoire contenant les données stockées dans l'armoire
+        self.casier = [] # Casier identifié après consultation du dictionnaire
 
         #cartographie dans la mémoire de l'agent les différentes positions des différents éléments
         ligne = []
@@ -64,6 +69,23 @@ class agent():
                 self.position_resident = num['position']
         
 
+    #Renvoie ce que l'agent voit autour de lui
+    def perception(self):
+            return {
+                "N":self.carte[self.position[0]-1][self.position[1]],
+                "S":self.carte[self.position[0]+1][self.position[1]],
+                "E":self.carte[self.position[0]][self.position[1]+1],
+                "O":self.carte[self.position[0]][self.position[1]-1]
+            }
+
+    def donnerDirection(self,case):
+        if self.position[0] == case[0]:
+            if self.position[1] < case[1]:return "E"
+            else: return "O"
+        elif self.position[0] < case[0]: return "S"
+        else: return "N"
+
+
 
     def deplacement(self, case):
         self.carte[self.position[0]][self.position[1]] = "."
@@ -72,13 +94,17 @@ class agent():
         self.action = "Avancer"
 
 
-    def Consulter(self):
+    def Consulter(self,entrees):
         self.consulte = True
         self.action = "Consulte"
+        dictionnaire = Dictionnaire()
+        self.casier,emotion,intensite = dictionnaire.findEmotion(self.demande,entrees)
+        return emotion,intensite
 
-    def Chercher(self):
-        self.main = ["quelque chose"]
+    def Chercher(self,casiers,afficher,ajouterTrace):
         self.action = "Chercher"
+        self.main, casierChoisi, repli = self.armoire.fouillerCasier(self.casier,casiers,afficher,ajouterTrace)
+        return self.main, casierChoisi, repli
 
     def Donner(self):
         self.main = []
@@ -95,3 +121,5 @@ class agent():
         self.position_resident = []
         self.action = "Impossible d'acceder à un resident, prise de la demande suivante"
         self.numero += 1
+
+    
