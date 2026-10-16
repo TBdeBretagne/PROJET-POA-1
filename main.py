@@ -102,7 +102,12 @@ def main(argv):
             if A.position in case_arrive:
                 emotion, intensite = A.Consulter(dictionnaire.get("entrees"))
                 trace.ajouterPas(A.numero,A.position,A.armoire.selecteur,A.action,None,A.perception(),None,"Le robot consulte le dictionnaire")
-
+                if A.casier == None:
+                    trace.ajouterLivraison(A.numero,scenario["demandes"][A.numero]["resident"],emotion,intensite,casier_choisi,repli,objet,False,"Emotion indéterminée")
+                    Succed[A.numero] = "F"
+                    A.Suivant()
+                    continue
+            
             else:
                 destination = A.position_dictionnaire
                 dest = "Dictionnaire" 
@@ -113,6 +118,7 @@ def main(argv):
                 objet,casier_choisi, repli = A.Chercher(armoire.get("casiers"),afficher,ajouterTrace)
                 if objet == None:
                     trace.ajouterLivraison(A.numero,scenario["demandes"][A.numero]["resident"],emotion,intensite,casier_choisi,repli,objet,False,"Armoire vide")
+                    Succed[A.numero] = "F"
                     A.Suivant()
                     continue
                 

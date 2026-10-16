@@ -1,4 +1,47 @@
-# PROJET-POA-1
-PROJET POA
+# Robot de réconfort — DRAME Ibraima & BRETON Thomas
 
-Run : python main.py cartes/appartement_01.json cartes/scenario_01.json donnees sorties/trace_01.json 
+Projet de semestre, master informatique. Un robot à perception locale
+consulte un dictionnaire, fouille une armoire et rapporte un objet à un
+résident.
+
+Langage : Python — Version : 3
+
+## Lancer
+
+```
+python main.py <carte.json> <scenario.json> <dossier_donnees> <trace_sortie.json>
+```
+
+Exemple :
+
+```
+python agent.py cartes/appartement_01.json cartes/scenario_01.json donnees sortie.json
+```
+
+Dépendances : *aucune*, ou la liste et comment les installer.
+
+## Tester
+
+```
+<votre commande de test>
+```
+
+*Une phrase sur ce que couvrent les tests.*
+
+## Organisation du code
+
+| Fichier | Rôle |
+|---|---|
+| `agent.py` | point d'entrée, boucle de décision |
+| `…` | … |
+
+## État
+
+**Ce qui marche.** *À compléter.*
+
+**Ce qui ne marche pas.** *À compléter — soyez honnêtes, c'est noté en
+votre faveur.*
+
+## Vidéo
+
+`demo.mp4` (ou le lien), également déclarée dans `rendu.json`.

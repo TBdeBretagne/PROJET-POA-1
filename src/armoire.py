@@ -102,7 +102,7 @@ class Armoire():
             self.selecteur = self.moveCursor(direction)
             self.updateArmoire(casiers)
             afficher()
-            time.sleep(1)
+            time.sleep(0.5)
             
 
         if self.carteArmoire[self.selecteur[0]][self.selecteur[1]] == 'O':

@@ -27,5 +27,5 @@ class Dictionnaire():
                         self.intensites[entrees[j].get("intensite")],
                         self.emotions[entrees[j].get("emotion")]
                     ],entrees[j].get("emotion"),entrees[j].get("intensite")
-        return None
+        return None,None,None
 
