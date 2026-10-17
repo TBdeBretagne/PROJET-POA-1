@@ -1,4 +1,4 @@
-# Robot de réconfort — DRAME Ibraima & BRETON Thomas
+# Robot de réconfort — DRAME Ibraima \& BRETON Thomas
 
 Projet de semestre, master informatique. Un robot à perception locale
 consulte un dictionnaire, fouille une armoire et rapporte un objet à un
@@ -9,16 +9,16 @@ Langage : Python — Version : 3
 ## Lancer
 
 ```
-python main.py <carte.json> <scenario.json> <dossier_donnees> <trace_sortie.json>
+python main.py <carte.json> <scenario.json> <dossier\_donnees> <trace\_sortie.json>
 ```
 
 Exemple :
 
 ```
-python agent.py cartes/appartement_01.json cartes/scenario_01.json donnees sortie.json
+python main.py cartes/appartement\_01.json cartes/scenario\_01.json donnees sorties/sortie.json
 ```
 
-Dépendances : *aucune*, ou la liste et comment les installer.
+Dépendances : *aucune*
 
 ## Tester
 
@@ -30,10 +30,18 @@ Dépendances : *aucune*, ou la liste et comment les installer.
 
 ## Organisation du code
 
-| Fichier | Rôle |
-|---|---|
-| `agent.py` | point d'entrée, boucle de décision |
-| `…` | … |
+|Fichier|Rôle|
+|-|-|
+|`main.py`|point d'entrée, boucle de décision|
+|`affichage.py`|gestion de l'affichage dans le terminal|
+|`agent.py`|classe agent et toutes ces fonctionnalités|
+|`armoire.py`|classe armoire et ces fonctionnalités|
+|`chemin.py`|calcul du plus court chemin|
+|`dictionnaire.py`|classe dictionnaire , recherche d'émotions|
+|`File.py`|enfiler, défiler|
+|`reconfort\_io.py`|vérification des fichiers d'entrées|
+|`test.py`|vérification de la cohérence des données cartes/scénario|
+|`trace.py`|classe Trace, écriture des données |
 
 ## État
 
@@ -44,4 +52,5 @@ votre faveur.*
 
 ## Vidéo
 
-`demo.mp4` (ou le lien), également déclarée dans `rendu.json`.
+`VidéoAgent.mp4`
+
