@@ -15,7 +15,7 @@ from src.trace import Trace
 def main(argv):
     print("\033[2J\033[H", end="")
     if len(argv) != 5:
-        print(__doc__.strip())
+        print("La commande ne dispose pas de toute les informations nécessaires au lancement du programme")
         return 2
     chemin_carte, chemin_scenario = Path(argv[1]), Path(argv[2])
     dossier_donnees, chemin_sortie = Path(argv[3]), Path(argv[4])
@@ -32,6 +32,7 @@ def main(argv):
         return 1
 
     if(test.Test_coherence(carte, scenario) == 1):
+        print("Erreur : incohérence dans les fichiers")
         return 1
 
     # Redimensionne à 40 lignes et 100 colonnes
