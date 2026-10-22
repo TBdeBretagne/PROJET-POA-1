@@ -45,10 +45,18 @@ Dépendances : *aucune*
 
 ## État
 
-**Ce qui marche.** *À compléter.*
+**Ce qui marche.** 
+Le robot ce déplace librement dans l'espace, tout en découvrant celui-ci.
+Il ne connais donc pas l'espace à l'avance, uniquement l'emplacement de l'armoire, du dictionnaire et des résidents.
+Il parvient a livrer un objet au résident quand cela est possible, en décidant lui même qu'elle objet choisir, et dans le cas contraire il passe à la demande suivante.
+Il s'arrete une fois qu'il a traité toutes les demandes.
+Une fois qu'il a découvert la zone, ses déplacements sont plus précis.
 
-**Ce qui ne marche pas.** *À compléter — soyez honnêtes, c'est noté en
-votre faveur.*
+**Ce qui ne marche pas.** 
+Une fois toute l'armoire découverte, le robot la parcoure en entier si elle est vide, malgres le fait qu'il sache qu'elle est vide, et ce à chaque fois qu'il y va. Il ne prends pas l'initiative de ne pas la parcourir.
+
+
+ 
 
 ## Vidéo
 
